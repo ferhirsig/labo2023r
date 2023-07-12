@@ -14,8 +14,8 @@ PARAM$experimento <- "CA6114"
 PARAM$dataset <- "./datasets/competencia_2023.csv.gz"
 
 # valores posibles
-#  "MachineLearning"  "EstadisticaClasica" "Ninguno" "Silmafer"
-PARAM$metodo <- "Silmafer"
+#  "MachineLearning"  "EstadisticaClasica" "Ninguno" "Frollmean"
+PARAM$metodo <- "Frollmean"
 PARAM$home <- "~/buckets/b1/"
 
 # FIN Parametros del script
@@ -55,6 +55,30 @@ CorregirCampoMes <- function(pcampo, pmeses) {
     )
   ]
 }
+
+CorregirCampoMes_Frollmean <- function(pcampo, pmeses) {
+  tbl <- dataset[, list(
+    "v1" = shift(get(pcampo), 2, type = "lag"),
+    "v2" = shift(get(pcampo), 2, type = "lead"),
+    "v3" = shift(get(pcampo), 1, type = "lag"),
+    "v4" = shift(get(pcampo), 1, type = "lead")
+  ),
+  by = numero_de_cliente
+  ]
+  
+  tbl[, numero_de_cliente := NULL]
+  tbl[, promedio := rowMeans(tbl[, list(v1, v2, v3, v4)], na.rm = TRUE)]
+  
+  dataset[
+    ,
+    paste0(pcampo) := ifelse(is.na(get(pcampo)) | get(pcampo) == 0,
+                             tbl$promedio,
+                             get(pcampo)),
+    with = FALSE
+  ]
+}
+
+
 #------------------------------------------------------------------------------
 # reemplaza cada variable ROTA  (variable, foto_mes)
 #  con el promedio entre  ( mes_anterior, mes_posterior )
@@ -206,6 +230,65 @@ Corregir_MachineLearning <- function(dataset) {
   dataset[foto_mes == 202006, ctrx_quarter := NA]
   dataset[foto_mes == 202006, cmobile_app_trx := NA]
 }
+
+Corregir_Frollmean <- function(dataset) {  
+  CorregirCampoMes_Frollmean("thomebanking", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("chomebanking_transacciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("tcallcenter", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccallcenter_transacciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("cprestamos_personales", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mprestamos_personales", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mprestamos_hipotecarios", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccajas_transacciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccajas_consultas", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccajas_depositos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccajas_extracciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccajas_otras", c(201901, 201906, 202001, 202101, 202106))
+  
+  CorregirCampoMes_Frollmean("ctarjeta_visa_debitos_automaticos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mttarjeta_visa_debitos_automaticos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("Visa_mfinanciacion_limite", c(201901, 201906, 202001, 202101, 202106))
+  
+  CorregirCampoMes_Frollmean("mrentabilidad", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mrentabilidad_annual", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcomisiones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mpasivos_margen", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mactivos_margen", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccomisiones_otras", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcomisiones_otras", c(201901, 201906, 202001, 202101, 202106))
+  
+  CorregirCampoMes_Frollmean("ctarjeta_visa_descuentos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ctarjeta_master_descuentos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mtarjeta_visa_descuentos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mtarjeta_master_descuentos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccajeros_propios_descuentos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcajeros_propios_descuentos", c(201901, 201906, 202001, 202101, 202106))
+  
+  CorregirCampoMes_Frollmean("cliente_vip", c(201901, 201906, 202001, 202101, 202106))
+  
+  CorregirCampoMes_Frollmean("active_quarter", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcuentas_saldo", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ctarjeta_debito_transacciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mautoservicio", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ctarjeta_visa_transacciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ctarjeta_visa_transacciones", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("cextraccion_autoservicio", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mextraccion_autoservicio", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccheques_depositados", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcheques_depositados", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcheques_emitidos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcheques_emitidos", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccheques_depositados_rechazados", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcheques_depositados_rechazados", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("ccheques_emitidos_rechazados", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("mcheques_emitidos_rechazados", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("catm_trx", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("matm", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("catm_trx_other", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("matm_other", c(201901, 201906, 202001, 202101, 202106))
+  CorregirCampoMes_Frollmean("cmobile_app_trx", c(201901, 201906, 202001, 202101, 202106))
+}
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Aqui empieza el programa
@@ -231,15 +314,47 @@ write_yaml(PARAM, file = "parametros.yml") # escribo parametros utilizados
 
 setorder(dataset, numero_de_cliente, foto_mes)
 
+columnasDF <- data.frame(columna1 = dataset$numero_de_cliente,
+                         columna2 = dataset$foto_mes,
+                         columna3 = dataset$mprestamos_personales)
+
+res_columnasDF <- aggregate(columna3 ~ columna1 + columna2, 
+                                data = columnasDF, FUN = sum)
+
+setorder(res_columnasDF, columna1)
+
+fwrite(res_columnasDF,
+       file = "resumen_columnas.csv",
+       logical01 = TRUE,
+       sep = ","
+)
+
+
 # corrijo los  < foto_mes, campo >  que fueron pisados con cero
 switch(PARAM$metodo,
   "MachineLearning"     = Corregir_MachineLearning(dataset),
   "EstadisticaClasica"  = Corregir_EstadisticaClasica(dataset),
   "Ninguno"             = cat("No se aplica ninguna correccion.\n"),
+  "Frollmean"           = Corregir_Frollmean(dataset)
 )
 
+columnasDF_New <- data.frame(columna1 = dataset$numero_de_cliente, 
+                             columna2 = dataset$foto_mes,
+                             columna3 = dataset$mprestamos_personales)
+
+res_columnasDF_New <- aggregate(columna3 ~ columna1 + columna2, 
+                                data = columnasDF_New, FUN = sum)
+
+setorder(res_columnasDF_New, columna1)
+
+fwrite(res_columnasDF_New,
+       file = "resumen_columnas_New.csv",
+       logical01 = TRUE,
+       sep = ","
+)
 
 #------------------------------------------------------------------------------
+
 # grabo el dataset
 fwrite(dataset,
   file = "dataset.csv.gz",

@@ -319,7 +319,7 @@ columnasDF <- data.frame(columna1 = dataset$numero_de_cliente,
                          columna3 = dataset$mprestamos_personales)
 
 res_columnasDF <- aggregate(columna3 ~ columna1 + columna2, 
-                                data = columnasDF_New, FUN = sum)
+                                data = columnasDF, FUN = sum)
 
 setorder(res_columnasDF, columna1)
 
