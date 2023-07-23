@@ -1,0 +1,4 @@
+experimento: CA7110
+dataset: ./datasets/dataset_pequeno.csv
+metodo: MachineLearning
+home: ~/buckets/b1/
