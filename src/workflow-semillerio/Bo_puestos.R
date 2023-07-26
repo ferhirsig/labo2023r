@@ -84,3 +84,4 @@ print(paste("Fila con valor aproximado a la media de feature_fraction:", fila_me
 print(paste("Fila con valor aproximado a la media de num_leaves:", fila_media_num_leaves))
 print(paste("Fila con valor aproximado a la media de min_data_in_leaf:", fila_media_min_data_in_leaf))
 
+
