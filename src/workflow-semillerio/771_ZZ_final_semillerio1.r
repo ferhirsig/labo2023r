@@ -25,12 +25,12 @@ PARAM$exp_input <- "HT7511"
 
 # Que modelos quiero, segun su posicion en el ranking
 # de la Bayesian Optimizacion, ordenado por ganancia descendente
-PARAM$modelos_rank <- c(1, 10 , 20 , 30) #CAMBIARRR ESTO 
+PARAM$modelos_rank <- c(1,23,36,56,3) #CAMBIARRR ESTO 
 
 # cantidad de semillas a utilizar en el semillerio,
 #  podrian ser 50 o 100 para mayor estabilidad
 #  semillerio <- 1  es el ZZ_final  tradicional
-PARAM$semillerio <- 20
+PARAM$semillerio <- 50
 
 # se utiliza para generar el vector de  PARAM$semillerio  semillas
 PARAM$semilla_primos <- 103031

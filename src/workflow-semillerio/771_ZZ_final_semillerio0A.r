@@ -25,7 +25,7 @@ PARAM$exp_input <- "HT7510"
 
 # Que modelos quiero, segun su posicion en el ranking
 # de la Bayesian Optimizacion, ordenado por ganancia descendente
-PARAM$modelos_rank <- c(50,12,42,13)
+PARAM$modelos_rank <- c(1,50,12,42,13)
 
 # cantidad de semillas a utilizar en el semillerio,
 #  podrian ser 50 o 100 para mayor estabilidad
